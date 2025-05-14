@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!-- saved from url=(0100)https://s0.2mdn.net/sadbundle/10331958845425854989/SE324_BPlatDynamic_728x90.V2/index.html?ev=01_253 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta name="ad.size" content="width=728,height=90">
+	<link rel="StyleSheet" href="./styles.css" type="text/css">
+	<script src="./gsap_3.5.1_min.js"></script>
+	<script src="./motionpathplugin_3.5.1_min.js"></script>
+	<script src="./animation.js"></script>
+	<script type="text/javascript">
+		var clickTag = "https://www.americanexpress.com/us/credit-cards/business/business-credit-cards/american-express-business-platinum-credit-card-amex/";
+	</script>
+<script type="text/javascript">
+    
+  (function() {
+    var MAX_URL_PARAM_LENGTH = 34;
+    var CLICK_X_URL_KEY = 'nx';
+    var CLICK_Y_URL_KEY = 'ny';
+    var CREATIVE_DIMENSIONS_KEY = 'dim';
+    var AD_URL_PARAM = '&adurl=';
+
+    var relegateNavigation = '';
+    var urlParamMap = {};
+
+    var isNewtonTokenSet = false;
+    var isTurtleXAdClick = false;
+    var reportingIds = {};
+
+    urlParamMap[CLICK_X_URL_KEY] = null;
+    urlParamMap[CLICK_Y_URL_KEY] = null;
+    urlParamMap[CREATIVE_DIMENSIONS_KEY] = null;
+
+    var handleClickTagMessage = function(e) {
+      try {
+        var eventData = JSON.parse(e.data);
+      } catch (err) {
+        return;
+      }
+      if (eventData.isInitClickTag) {
+        if (eventData.clickTags) {
+          for (var i = 0; i < eventData.clickTags.length; i++) {
+            var clkTag = eventData.clickTags[i];
+            window[clkTag.name] = clkTag.url;
+
+            if (clkTag.eTldPlusOne) {
+              eTldPlusOnes[clkTag.url] = clkTag.eTldPlusOne;
+            }
+            if (clkTag.reportingId) {
+              reportingIds[clkTag.url] = clkTag.reportingId;
+            }
+          }
+        } else if (eventData.clickTag) {
+          window.clickTag = eventData.clickTag;
+        }
+        relegateNavigation = eventData.relegateNavigation;
+      }
+      if (isNewtonEnabled(eventData) && !isNewtonTokenSet) {
+        var newtonOt2Token = eventData.newtonOt2Token;
+        enableAttributionReportingApi(newtonOt2Token);
+      }
+      if (eventData.isTurtleXAdClick) {
+        isTurtleXAdClick = true;
+      }
+    };
+
+    var isNewtonEnabled = function(eventData) {
+      return 'newtonOt2Token' in eventData;
+    }
+
+    var enableAttributionReportingApi = function(originTrialToken) {
+      if (/Chrome/.test(window.navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.httpEquiv = 'origin-trial';
+        meta.content = String(originTrialToken);
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        isNewtonTokenSet = true;
+      }
+    };
+
+    var storeClickCoordinates = function(e) {
+      urlParamMap[CLICK_X_URL_KEY] = Math.round(e.clientX);
+      urlParamMap[CLICK_Y_URL_KEY] = Math.round(e.clientY);
+    };
+
+    var getCreativeDimensions = function() {
+      return window.innerWidth + 'x' + window.innerHeight;
+    }
+
+    var getExitClickParams = function(e) {
+      urlParamMap[CREATIVE_DIMENSIONS_KEY] = getCreativeDimensions();
+
+      var exitParams = '';
+      for (var key in urlParamMap) {
+        exitParams += '&' + key + '=';
+        if (urlParamMap[key] !== null) {
+          exitParams += urlParamMap[key];
+        }
+      }
+      return exitParams;
+    }
+
+    var appendExitClickParams = function(url) {
+      var adUrlIndex = url.toLowerCase().indexOf(AD_URL_PARAM);
+      var paramsToBeAdded = getExitClickParams();
+      if (adUrlIndex > -1 && paramsToBeAdded.length <= MAX_URL_PARAM_LENGTH) {
+        url = url.substr(0, adUrlIndex) + paramsToBeAdded +
+          url.substr(adUrlIndex);
+      };
+      return url;
+    };
+
+    if (open.call) {
+      window.open = function(open) {
+        return function(url, name, features) {
+          if (isTurtleXAdClick && !!reportingIds[url]) {
+            var message = {
+              'reportingId': reportingIds[url],
+              'clickX': urlParamMap[CLICK_X_URL_KEY],
+              'clickY': urlParamMap[CLICK_Y_URL_KEY],
+              'creativeDims': getCreativeDimensions()
+              };
+            parent.postMessage(JSON.stringify(message), '*');
+          }
+          url = appendExitClickParams(url);
+          if (relegateNavigation === 'parent') {
+            var message = {'clickTag': url, 'isPostClickTag': true};
+            parent.postMessage(JSON.stringify(message), '*');
+          } else {
+            var args = [url, name];
+            var windowFeatures = '';
+
+            if (features) {
+              windowFeatures = windowFeatures.concat(features);
+            }
+            if (isNewtonTokenSet &&
+                !!document.featurePolicy?.allowedFeatures().includes(
+                  'attribution-reporting')) {
+              if (features) {
+                if (!features.includes('attributionsrc')) {
+                  windowFeatures = windowFeatures.concat(features, ', attributionsrc');
+                }
+              } else {
+                windowFeatures = windowFeatures.concat('attributionsrc');
+              }
+            }
+
+            if (windowFeatures) {
+              args.push(windowFeatures);
+            }
+            open.apply(window,args);
+          }
+        };
+      }(window.open);
+    }
+
+    if (window.addEventListener) {
+      window.addEventListener(
+          'message', handleClickTagMessage, false);
+      window.addEventListener('mousedown', storeClickCoordinates, true);
+    } else {
+      window.attachEvent('onmessage', handleClickTagMessage);
+    }
+  })();
+    
+  </script><meta http-equiv="origin-trial" content="A4AD7vbM2W0e5fHylDM4fFrsUvtmQ95U+ZVrdOdh3fgH0l0e7RVkAsZryrSQIRhPVvmC60wTlh880eDyo+HpXQAAAABueyJvcmlnaW4iOiJodHRwczovL3MwLjJtZG4ubmV0OjQ0MyIsImZlYXR1cmUiOiJQcml2YWN5U2FuZGJveEFkc0FQSXMiLCJleHBpcnkiOjE2OTUxNjc5OTksImlzVGhpcmRQYXJ0eSI6dHJ1ZX0="></head>
+
+<body onload="init()">
+	<div id="container_dc" style="display: block;">
+		<div id="content_dc">
+
+		
+			<div class="plane full_div" style="transform-origin: 364px 45px; transform: translate3d(0px, 0px, 0px);"><img src="./plane.png"></div>
+			<div class="hotel full_div" style="transform-origin: 364px 45px; transform: translate3d(0px, 0px, 0px);"><img src="./hotel.png"></div>
+
+			<div id="copy1" class="full_div">
+				<div class="copy1a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1a-1.png"></div>
+				<div class="copy1a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1a-2.png"></div>
+				<div class="copy1a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1a-3.png"></div>
+				<div class="copy1a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1a-4.png"></div>
+				<div class="copy1a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1a-5.png"></div>
+				<div class="copy1a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1a-6.png"></div>
+				<div class="copy1a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1a-7.png"></div>
+
+				<div class="copy1b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1b-1.png"></div>
+				<div class="copy1b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1b-2.png"></div>
+				<div class="copy1b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1b-3.png"></div>
+
+				<div class="copy1c full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1c-1.png"></div>
+				<div class="copy1c full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1c-2.png"></div>
+				<div class="copy1c full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy1c-3.png"></div>
+			</div>
+
+			<div id="bg1" class="full_div" style="transform: translate3d(0px, 0px, 0px);"></div>
+			<div id="copy2" class="full_div">
+				<div class="copy2a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy2a-1.png"></div>
+				<div class="copy2a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy2a-2.png"></div>
+				<div class="copy2a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy2a-3.png"></div>
+
+				<div class="copy2b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy2b-1.png"></div>
+				<div class="copy2b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy2b-2.png"></div>
+				<div class="copy2b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy2b-3.png"></div>
+
+				<div class="copy2c full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy2c-1.png"></div>
+				<div class="copy2c full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy2c-2.png"></div>
+
+			</div>
+			<div class="points full_div" style="transform-origin: 364px 45px; transform: translate3d(0px, 0px, 0px);"><img src="./points.png"></div>
+
+			<div class="hand_container full_div" style="transform-origin: 364px 45px; transform: translate3d(0px, 0px, 0px);">
+				<div class="hand full_div" style="transform-origin: 364px 45px; transform: translate3d(0px, 0px, 0px);"><img src="./hand.png"></div>
+			</div>
+			<div id="bg2" class="full_div" style="transform: translate3d(0px, 0px, 0px);"></div>
+			<div class="line_container full_div" style="transform: translate3d(0px, 0px, 0px);">
+				<div class="line full_div" style="transform: translate3d(0px, 0px, 0px);"><img src="./line.png"></div>
+			</div>
+
+			<div id="copy3" class="full_div">
+				<div class="copy3a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy3a-1.png"></div>
+				<div class="copy3a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy3a-2.png"></div>
+				<div class="copy3a full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy3a-3.png"></div>
+
+				<div class="copy3b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy3b-1.png"></div>
+				<div class="copy3b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy3b-2.png"></div>
+				<div class="copy3b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy3b-3.png"></div>
+				<div class="copy3b full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy3b-4.png"></div>
+
+				<div class="copy3c full_div" style="transform: translate3d(0px, 0px, 0px); display: block;"><img src="./copy3c-1.png"></div>
+
+			</div>
+
+		
+
+			<div class="card full_div"><img src="./card.png"></div>
+
+
+			<div class="flip_container" style="perspective: 400px;">
+				<div id="card_container1" class="full_div" style="transform-style: preserve-3d; transform-origin: 378px 20px; transform: translate3d(0px, 0px, 0px);">
+					<div class="card full_div"><img src="./lil_card.png"></div>
+				</div>
+			</div>
+
+
+
+			<div id="logo1" class="full_div"><img src="./logo1.png"></div>
+			<div id="logo2" class="full_div" style="transform: translate3d(0px, 0px, 0px); opacity: 1; visibility: inherit;"><img src="./logo2.png"></div>
+			<div id="legal" class="full_div"><img src="./legal.png"></div>
+
+
+			<div id="cta" class="full_div" style="transform-origin: 364px 45px; transform: translate3d(0px, 0px, 0px); opacity: 1; visibility: inherit;">
+				<div class="cta_out full_div"><img src="./cta.png"></div>
+				<div class="cta_over full_div" style="display: none;"><img src="./cta-over.png"></div>
+			</div>
+
+
+
+	</div>
+	<div id="border_div" class="full_div"></div>
+	<div id="bgFade" class="full_div" style="transform: translate3d(0px, 0px, 0px); opacity: 0; visibility: hidden; display: none;"></div>
+	<a id="background_exit_dc" onclick="javascript:window.open(window.clickTag)" target="_blank"></a>
+	</div>
+
+
+</body></html>
