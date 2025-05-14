@@ -1,0 +1,185 @@
+/* Default style, feel free to remove if not needed. */
+body,
+body * {
+	vertical-align: baseline;
+	border: 0;
+	outline: 0;
+	padding: 0;
+	margin: 0;
+
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	font-family: 'AMEX_bold', Helvetica, Arial, sans-serif;
+	color: #fff;
+	letter-spacing: 0px;
+	line-height: 1.0em;
+	font-size: 40px;
+	text-align: left;
+	font-weight: normal;
+
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+#container_dc img {
+	display: block;
+	width: 100%;
+	height: auto;
+	position: absolute;
+}
+
+/* global */
+#container_dc {
+	position: absolute;
+	width: 728px;
+	height: 90px;
+	top: 0;
+	left: 0;
+
+	margin: auto;
+	overflow: hidden;
+
+}
+
+#content_dc {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: #006fcf;
+	overflow: hidden;
+}
+
+
+
+#bgFade {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 9994;
+	background-color: #fff;
+}
+
+#border_div {
+	width: 728px;
+	height: 90px;
+	top: 0px;
+	left: 0px;
+	border: 1px solid #000;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+
+.full_div {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+
+.shine_mask {
+	background-color: transparent;
+	top: 63px;
+	left: 45px;
+	width: 211px;
+	height: 134px;
+	border-radius: 8px;
+
+	overflow: hidden;
+	-webkit-mask-image: -webkit-radial-gradient(white, black);
+	mask-image: radial-gradient(white, black);
+}
+
+.card_shine {
+	left: -200px;
+	height: 200px;
+	width: 150px;
+	background: rgb(255, 255, 255);
+	background: -moz-linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%);
+	background: -webkit-linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%);
+	background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#ffffff", GradientType=1);
+}
+
+
+.card {
+	width: 728px;
+	height: 90px;
+}
+
+/*cta*/
+.cta_roll {
+	display: none;
+}
+
+
+#bg1 {
+	background-color: #00175a;
+}
+#bg2 {
+	background-color: #fff;
+}
+
+.points{
+	left:-1px;
+}
+
+.line_container{
+	overflow:hidden;
+	width: 375px;
+	height: 90px;
+}
+.line{
+	width: 728px;
+	height: 90px;
+}
+
+
+.flip_container {
+	position: absolute;
+	width: 728px;
+	height: 90px;
+}
+
+#card_container1{
+	position: absolute;
+	width: 728px;
+	height: 90px;
+}
+
+
+
+/* Invisible button for background clickthrough. */
+#background_exit_dc {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	cursor: pointer;
+	background-color: transparent;
+	z-index: 400;
+}
+
+
+
+
+:focus {
+	outline: none;
+}
+
+::-moz-focus-inner {
+	border: 0;
+}
